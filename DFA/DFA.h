@@ -11,9 +11,9 @@
 class DFA {
 
 public:
-    set<NFA::State*> getEclosure(NFA::State*);
+    static set<NFA::State*> getEclosure(NFA::State*);
     void convertNFAtoDFA(NFA::State*);
-
+    static string getStateName(set<NFA::State*>);
 };
 
 
