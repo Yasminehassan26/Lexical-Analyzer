@@ -6,7 +6,13 @@
 #define LEXICAL_ANALYZER_DFA_H
 
 
+#include "../NFA.h"
+
 class DFA {
+
+public:
+    set<NFA::State*> getEclosure(NFA::State*);
+    void convertNFAtoDFA(NFA::State*);
 
 };
 

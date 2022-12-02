@@ -55,8 +55,20 @@ build CMakeFiles/Lexical_Analyzer.dir/main.cpp.o: CXX_COMPILER__Lexical_Analyzer
   OBJECT_DIR = CMakeFiles/Lexical_Analyzer.dir
   OBJECT_FILE_DIR = CMakeFiles/Lexical_Analyzer.dir
 
+build CMakeFiles/Lexical_Analyzer.dir/DFA/DfaState.cpp.o: CXX_COMPILER__Lexical_Analyzer_Debug /home/blu-ray/CLionProjects/Lexical_Analyzer/DFA/DfaState.cpp || cmake_object_order_depends_target_Lexical_Analyzer
+  DEP_FILE = CMakeFiles/Lexical_Analyzer.dir/DFA/DfaState.cpp.o.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/Lexical_Analyzer.dir
+  OBJECT_FILE_DIR = CMakeFiles/Lexical_Analyzer.dir/DFA
+
 build CMakeFiles/Lexical_Analyzer.dir/DFA/DFA.cpp.o: CXX_COMPILER__Lexical_Analyzer_Debug /home/blu-ray/CLionProjects/Lexical_Analyzer/DFA/DFA.cpp || cmake_object_order_depends_target_Lexical_Analyzer
   DEP_FILE = CMakeFiles/Lexical_Analyzer.dir/DFA/DFA.cpp.o.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/Lexical_Analyzer.dir
+  OBJECT_FILE_DIR = CMakeFiles/Lexical_Analyzer.dir/DFA
+
+build CMakeFiles/Lexical_Analyzer.dir/DFA/State.cpp.o: CXX_COMPILER__Lexical_Analyzer_Debug /home/blu-ray/CLionProjects/Lexical_Analyzer/DFA/State.cpp || cmake_object_order_depends_target_Lexical_Analyzer
+  DEP_FILE = CMakeFiles/Lexical_Analyzer.dir/DFA/State.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/Lexical_Analyzer.dir
   OBJECT_FILE_DIR = CMakeFiles/Lexical_Analyzer.dir/DFA
@@ -69,7 +81,7 @@ build CMakeFiles/Lexical_Analyzer.dir/DFA/DFA.cpp.o: CXX_COMPILER__Lexical_Analy
 #############################################
 # Link the executable Lexical_Analyzer
 
-build Lexical_Analyzer: CXX_EXECUTABLE_LINKER__Lexical_Analyzer_Debug CMakeFiles/Lexical_Analyzer.dir/main.cpp.o CMakeFiles/Lexical_Analyzer.dir/DFA/DFA.cpp.o
+build Lexical_Analyzer: CXX_EXECUTABLE_LINKER__Lexical_Analyzer_Debug CMakeFiles/Lexical_Analyzer.dir/main.cpp.o CMakeFiles/Lexical_Analyzer.dir/DFA/DfaState.cpp.o CMakeFiles/Lexical_Analyzer.dir/DFA/DFA.cpp.o CMakeFiles/Lexical_Analyzer.dir/DFA/State.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/Lexical_Analyzer.dir
   POST_BUILD = :
