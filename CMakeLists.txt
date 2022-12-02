@@ -3,4 +3,4 @@ project(Lexical_Analyzer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Lexical_Analyzer main.cpp)
+add_executable(Lexical_Analyzer main.cpp DFA/DFA.cpp DFA/DFA.h)
