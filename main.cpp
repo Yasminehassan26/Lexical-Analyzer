@@ -1,5 +1,5 @@
 #include <iostream>
-#include "NFA.cpp"
+#include "NFA/NFA.cpp"
 
 using namespace std;
 

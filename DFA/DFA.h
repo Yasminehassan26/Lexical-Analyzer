@@ -6,14 +6,21 @@
 #define LEXICAL_ANALYZER_DFA_H
 
 
-#include "../NFA.h"
+#include "../NFA/NFA.h"
+#include "DfaState.h"
 
 class DFA {
 
 public:
     static set<NFA::State*> getEclosure(NFA::State*);
-    void convertNFAtoDFA(NFA::State*);
-    static string getStateName(set<NFA::State*>);
+    set<DfaState*> convertNFAtoDFA(NFA::State*);
+    static string getNfaStateName(set<NFA::State*>);
+    static string getDfaStateName(set<DfaState*>);
+
+    static void isAcceptingState(DfaState*,set<NFA::State*>);
+    set<DfaState*> minimize(vector<DfaState*>);
+    static set<DfaState*> minimizeHelper(set<set<DfaState*>>,vector<DfaState*>);
+
 };
 
 

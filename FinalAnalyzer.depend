@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1669852069 source:c:\users\mis\desktop\finalanalyzer\main.cpp
+	<iostream>
+	"NFA.cpp"
+
+1669999943 c:\users\mis\desktop\finalanalyzer\nfa.cpp
+	"NFA.h"
+	<fstream>
+	<sstream>
+	<string>
+	<stdbool.h>
+	<iostream>
+	<algorithm>
+	<vector>
+
+1670001017 c:\users\mis\desktop\finalanalyzer\nfa.h
+	<string>
+	<stack>
+	<map>
+	<deque>
+	<vector>
+	<set>
+	<algorithm>
+	<list>
+	<stdbool.h>
+	<iostream>
+

@@ -32,8 +32,11 @@ public:
     string getAcceptingPattern();
 
     int getId();
-    string getName();
 
+    string getName();
+    bool operator< (const DfaState &other) const {
+        return id < other.id;
+    }
 
 };
 
