@@ -56,7 +56,7 @@ vector<DfaState *> convertNFAtoDFA(NFA::State *start) {
     int id = 0;
     vector<DfaState *> dfaStates;
     set<NFA::State *> epsilon = DFA::getEclosure(start);
-    DfaState *inputState = new DfaState(id++, DFA::getStateName(epsilon));
+    DfaState *inputState = new DfaState(id++, DFA::getNfaStateName(epsilon));
     map<string, DfaState *> visitedStates;
     map<string, pair<DfaState *, set<NFA::State *>>> notVisitedStates;
     notVisitedStates.insert({inputState->getName(), pair<DfaState *, set<NFA::State *>>(inputState, epsilon)});
@@ -80,12 +80,12 @@ vector<DfaState *> convertNFAtoDFA(NFA::State *start) {
             }
         }
         for (auto itr: DFATransitions) {
-            if (visitedStates.count(DFA::getStateName(itr.second)) == 0) {
-                temp.first->setTransitions(visitedStates.at(DFA::getStateName(itr.second)), itr.first);
-            } else if (notVisitedStates.count(DFA::getStateName(itr.second)) == 0) {
-                temp.first->setTransitions(notVisitedStates.at(DFA::getStateName(itr.second)).first, itr.first);
+            if (visitedStates.count(DFA::getNfaStateName(itr.second)) == 0) {
+                temp.first->setTransitions(visitedStates.at(DFA::getNfaStateName(itr.second)), itr.first);
+            } else if (notVisitedStates.count(DFA::getNfaStateName(itr.second)) == 0) {
+                temp.first->setTransitions(notVisitedStates.at(DFA::getNfaStateName(itr.second)).first, itr.first);
             } else {
-                DfaState *newTran = new DfaState(id++, DFA::getStateName(itr.second));
+                DfaState *newTran = new DfaState(id++, DFA::getNfaStateName(itr.second));
                 notVisitedStates.insert({newTran->getName(), pair<DfaState *, set<NFA::State *>>(newTran, itr.second)});
                 temp.first->setTransitions(newTran, itr.first);
             }
@@ -204,32 +204,37 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
         minimizedStates.insert(combinedStates);// ab cde
     }
 
-    return minimizeHelper(minimizedStates,sortedDfaStates);
+    return minimizeHelper(minimizedStates);
 
 
     }
 
-set<DfaState *> DFA::minimizeHelper(set<set<DfaState *>> minimizedStates,vector<DfaState *> dfaStates) {
+set<DfaState *> DFA::minimizeHelper(set<set<DfaState *>> minimizedStates) {
 
     int ind=0;
-    set<DfaState *> combinedStates;
+    set<pair<set<DfaState*>,DfaState*>> combinedStates;
     for (auto itr : minimizedStates)
     {
         DfaState* newState=new DfaState(ind, getDfaStateName(itr));
-        combinedStates.insert(newState);
+        combinedStates.insert({itr,newState});
         ind++;
     }
-    for (auto combinedState : minimizedStates)
-    {
-        int index=0;
-        for (auto minimizedState : minimizedStates)
-        {
-            multimap<char,set<DfaState*>> transitions=minimizedStates.get;
-            index++;
+    set<DfaState*> result;
+    for (auto combinedState : combinedStates) {
+        DfaState *beg = *(combinedState.first.begin());
+        multimap<char, DfaState *> mainTrans = beg->getTransitions();
+        for (auto itr: mainTrans) {
+            for (auto loopState: combinedStates) {
+                if (loopState.first.find(itr.second) != loopState.first.end()) {
+                    combinedState.second->setTransitions(loopState.second, itr.first);
+                    break;
+                }
+            }
         }
+        result.insert(combinedState.second);
     }
 
-    return set<DfaState *>();
+    return result;
 }
 
 

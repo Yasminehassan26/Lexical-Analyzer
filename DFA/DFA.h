@@ -19,7 +19,7 @@ public:
 
     static void isAcceptingState(DfaState*,set<NFA::State*>);
     set<DfaState*> minimize(vector<DfaState*>);
-    static set<DfaState*> minimizeHelper(set<set<DfaState*>>,vector<DfaState*>);
+    static set<DfaState*> minimizeHelper(set<set<DfaState*>>);
 
 };
 
