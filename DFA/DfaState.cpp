@@ -12,19 +12,19 @@ DfaState::DfaState(int id,string name) {
 
 int DfaState::getId()
 {
-    return id;
+    return this->id;
 }
 string DfaState::getName()
 {
-    return name;
+    return this->name;
 }
 bool DfaState::getIsAcceptingState()
 {
-    return acceptingState;
+    return this->acceptingState;
 }
 string DfaState::getAcceptingPattern()
 {
-    return acceptingPattern;
+    return this->acceptingPattern;
 }
 void DfaState::setAcceptingState()
 {
@@ -39,11 +39,11 @@ void DfaState::setTransitions(DfaState * state, char target) {
 }
 multimap<char, DfaState*> DfaState::getTransitions()
 {
-    return transitions;
+    return this->transitions;
 }
 DfaState* DfaState::getTransition(char target)
 {
-    return transitions.find(target)->second;
+    return this->transitions.find(target)->second;
 }
 
 

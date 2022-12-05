@@ -32,7 +32,27 @@ set<NFA::State *> DFA::getEclosure(NFA::State *startState) {
     return visitedStates;
 }
 
-void DFA::isAcceptingState(DfaState *dfaState, set<NFA::State *> nfaStates) {
+void DFA::isAcceptingStateNFA(DfaState *dfaState, set<NFA::State *> nfaStates) {
+    int maxPriority = INT_MAX;
+    string token = "";
+    for (auto itr: nfaStates) {
+        if (itr->acceptingState) {
+            int tempPriority = itr->patternPriority;
+            if (tempPriority < maxPriority) {
+                maxPriority = tempPriority;
+                token = itr->acceptingPattern;
+            }
+        }
+    }
+    //after the for I have the max priority and its token
+
+    if (!token.empty()) {
+        dfaState->setAcceptingPattern(token);
+        dfaState->setAcceptingState();
+    }
+}
+
+void DFA::isAcceptingStateDFA(DfaState *dfaState, set<DfaState *> nfaStates) {
     int maxPriority = INT_MAX;
     string token = "";
     for (auto itr: nfaStates) {
@@ -56,16 +76,17 @@ vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
     int id = 0;
     vector<DfaState *> dfaStates;
     set<NFA::State *> epsilon = DFA::getEclosure(start);
-    DfaState *inputState = new DfaState(id++, DFA::getNfaStateName(epsilon));
+    DfaState *inputState = new DfaState(id, DFA::getNfaStateName(epsilon));
+    id++;
     map<string, DfaState *> visitedStates;
     map<string, pair<DfaState *, set<NFA::State *>>> notVisitedStates;
-    notVisitedStates.insert({inputState->getName(), pair<DfaState *, set<NFA::State *>>(inputState, epsilon)});
+    notVisitedStates.insert({inputState->name, pair<DfaState *, set<NFA::State *>>(inputState, epsilon)});
     while (!notVisitedStates.empty()) {
         pair<DfaState *, set<NFA::State *>> temp = notVisitedStates.begin()->second;
-        visitedStates.insert(pair<string, DfaState *>(temp.first->getName(), temp.first));
+        visitedStates.insert(pair<string, DfaState *>(temp.first->name, temp.first));
         dfaStates.push_back(temp.first);
         notVisitedStates.erase(notVisitedStates.begin());
-        DFA::isAcceptingState(temp.first, temp.second);
+        DFA::isAcceptingStateNFA(temp.first, temp.second);
         map<char, set<NFA::State *>> DFATransitions;
         for (auto itr: temp.second) {
             multimap<char, NFA::State *> transitions = itr->transitions;
@@ -85,8 +106,9 @@ vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
             } else if (notVisitedStates.count(DFA::getNfaStateName(itr.second)) != 0) {
                 temp.first->setTransitions(notVisitedStates.at(DFA::getNfaStateName(itr.second)).first, itr.first);
             } else {
-                DfaState *newTran = new DfaState(id++, DFA::getNfaStateName(itr.second));
-                notVisitedStates.insert({newTran->getName(), pair<DfaState *, set<NFA::State *>>(newTran, itr.second)});
+                DfaState *newTran = new DfaState(id, DFA::getNfaStateName(itr.second));
+                id++;
+                notVisitedStates.insert({newTran->name, pair<DfaState *, set<NFA::State *>>(newTran, itr.second)});
                 temp.first->setTransitions(newTran, itr.first);
             }
         }
@@ -105,7 +127,7 @@ string DFA::getNfaStateName(set<NFA::State *> epsilons) {
 string DFA::getDfaStateName(set<DfaState*> epsilons) {
     string name;
     for (auto itr: epsilons) {
-        name.append(itr->getName());
+        name.append(itr->name);
     }
     return name;
 }
@@ -125,7 +147,7 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
                 (!rowState->acceptingState && colState->acceptingState)) {
                 pairsArray[i][j] = true;
             }
-            if (rowState->acceptingState && colState->acceptingState && (rowState->getAcceptingPattern()!=colState->getAcceptingPattern())) {
+            if (rowState->acceptingState && colState->acceptingState && (rowState->acceptingPattern!=colState->acceptingPattern)) {
                 pairsArray[i][j] = true;
             }
         }
@@ -134,11 +156,11 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
         findPairs = false;
         for (int i = 0; i < sortedDfaStates.size(); i++) {
             DfaState *rowState = sortedDfaStates.at(i);
-            multimap<char, DfaState *> firstStateTransitions = rowState->getTransitions();
+            multimap<char, DfaState *> firstStateTransitions = rowState->transitions;
 
             for (int j = 0; j < i; j++) {
                 DfaState *colState = sortedDfaStates.at(j);
-                multimap<char, DfaState *> secondStateTransitions = colState->getTransitions();
+                multimap<char, DfaState *> secondStateTransitions = colState->transitions;
                 if (!pairsArray[i][j]) {
                     if (firstStateTransitions.size() != secondStateTransitions.size()) {
                         pairsArray[i][j] = true;
@@ -147,8 +169,8 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
                         for (auto itr = firstStateTransitions.begin(); itr != firstStateTransitions.end(); itr++) {
                             char key = itr->first;
                             if (secondStateTransitions.find(key) != secondStateTransitions.end()) {
-                                int index1 = itr->second->getId();
-                                int index2 = secondStateTransitions.find(key)->second->getId();
+                                int index1 = itr->second->id;
+                                int index2 = secondStateTransitions.find(key)->second->id;
                                 int row = max(index1, index2);
                                 int col = min(index1, index2);
                                 if (pairsArray[row][col]) {
@@ -223,13 +245,14 @@ set<DfaState *> DFA::minimizeHelper(set<set<DfaState *>> minimizedStates) {
     for (auto itr : minimizedStates)
     {
         DfaState* newState=new DfaState(ind, getDfaStateName(itr));
+        DFA::isAcceptingStateDFA(newState,itr);
         combinedStates.insert({itr,newState});
         ind++;
     }
     set<DfaState*> result;
     for (auto combinedState : combinedStates) {
         DfaState *beg = *(combinedState.first.begin());
-        multimap<char, DfaState *> mainTrans = beg->getTransitions();
+        multimap<char, DfaState *> mainTrans = beg->transitions;
         for (auto itr: mainTrans) {
             for (auto loopState: combinedStates) {
                 if (loopState.first.find(itr.second) != loopState.first.end()) {

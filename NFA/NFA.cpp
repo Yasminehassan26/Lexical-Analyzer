@@ -301,11 +301,11 @@ vector<string> NFA:: preprocessing(string regular)
 	preprocessedRE.push_back(tokens[tokens.size()-1]) ;
 
     //cout << preprocessedRE << endl ;
-    int k = 0 ;
-    for(k = 0 ; k<preprocessedRE.size();k++){
-    	cout << preprocessedRE[k] << " ";
-	}
-	cout << endl;
+//    int k = 0 ;
+//    for(k = 0 ; k<preprocessedRE.size();k++){
+//    	cout << preprocessedRE[k] << " ";
+//	}
+//	cout << endl;
 
 	return preprocessedRE;
 
@@ -315,7 +315,7 @@ vector<string> NFA:: preprocessing(string regular)
 bool NFA:: readRules(){
 
     fstream newfile;
-    newfile.open("input.txt",ios::in);
+    newfile.open("C:\\Users\\Carnival\\CLionProjects\\Lexical-Analyzer\\input.txt",ios_base::in);
     int priority = 1;
 
    if (newfile.is_open()){

@@ -17,7 +17,8 @@ public:
     static string getNfaStateName(set<NFA::State*>);
     static string getDfaStateName(set<DfaState*>);
 
-    static void isAcceptingState(DfaState*,set<NFA::State*>);
+    static void isAcceptingStateNFA(DfaState*,set<NFA::State*>);
+    static void isAcceptingStateDFA(DfaState*,set<DfaState*>);
     set<DfaState*> minimize(vector<DfaState*>);
     static set<DfaState*> minimizeHelper(set<set<DfaState*>>);
 

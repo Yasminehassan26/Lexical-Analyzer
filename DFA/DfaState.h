@@ -20,6 +20,7 @@ public:
     // True if this state is accepting state (final state)
     bool acceptingState=false;
     string acceptingPattern;
+    int patternPriority = -1;
 
     DfaState();
     DfaState(int,string);
