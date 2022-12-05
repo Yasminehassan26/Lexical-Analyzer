@@ -52,7 +52,7 @@ void DFA::isAcceptingState(DfaState *dfaState, set<NFA::State *> nfaStates) {
     }
 }
 
-vector<DfaState *> convertNFAtoDFA(NFA::State *start) {
+vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
     int id = 0;
     vector<DfaState *> dfaStates;
     set<NFA::State *> epsilon = DFA::getEclosure(start);
@@ -80,9 +80,9 @@ vector<DfaState *> convertNFAtoDFA(NFA::State *start) {
             }
         }
         for (auto itr: DFATransitions) {
-            if (visitedStates.count(DFA::getNfaStateName(itr.second)) == 0) {
+            if (visitedStates.count(DFA::getNfaStateName(itr.second)) != 0) {
                 temp.first->setTransitions(visitedStates.at(DFA::getNfaStateName(itr.second)), itr.first);
-            } else if (notVisitedStates.count(DFA::getNfaStateName(itr.second)) == 0) {
+            } else if (notVisitedStates.count(DFA::getNfaStateName(itr.second)) != 0) {
                 temp.first->setTransitions(notVisitedStates.at(DFA::getNfaStateName(itr.second)).first, itr.first);
             } else {
                 DfaState *newTran = new DfaState(id++, DFA::getNfaStateName(itr.second));
@@ -94,14 +94,7 @@ vector<DfaState *> convertNFAtoDFA(NFA::State *start) {
     return dfaStates;
 }
 
-string getNfaStateName(set<NFA::State *> epsilons) {
-    string name;
-    for (auto itr: epsilons) {
-        name.append(to_string(itr->id));
-    }
-    return name;
-}
-string getDfaStateName(set<DfaState*> epsilons) {
+string DFA::getNfaStateName(set<NFA::State *> epsilons) {
     string name;
     for (auto itr: epsilons) {
         name.append(to_string(itr->id));
@@ -109,10 +102,18 @@ string getDfaStateName(set<DfaState*> epsilons) {
     return name;
 }
 
+string DFA::getDfaStateName(set<DfaState*> epsilons) {
+    string name;
+    for (auto itr: epsilons) {
+        name.append(itr->getName());
+    }
+    return name;
+}
+
 set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
     vector<DfaState *> sortedDfaStates = dfaStates;
     std::sort(sortedDfaStates.begin(), sortedDfaStates.end());
-    bool pairsArray[sortedDfaStates.size()][sortedDfaStates.size()];
+    bool pairsArray[sortedDfaStates.size()][sortedDfaStates.size()] = { {false} };
     bool findPairs = true;
 
     //mark the pairs
