@@ -16,10 +16,10 @@ int main()
     c->setAcceptingPattern("C");
     DfaState *d = new DfaState(3,"d");
     d->setAcceptingState();
-    c->setAcceptingPattern("D");
+    d->setAcceptingPattern("C");
     DfaState *e = new DfaState(4,"e");
     e->setAcceptingState();
-    c->setAcceptingPattern("E");
+    e->setAcceptingPattern("C");
     DfaState *f = new DfaState(5,"f");
 
     a->setTransitions(b,'0');
@@ -41,6 +41,26 @@ int main()
     input.push_back(d);
     input.push_back(e);
     input.push_back(f);
+
+//    DfaState* a = new DfaState(0,"A");
+//    DfaState* b = new DfaState(0,"B");
+//    DfaState* c = new DfaState(0,"C");
+//
+//    b->setAcceptingState();
+//    b->setAcceptingPattern("B");
+//    c->setAcceptingState();
+//    c->setAcceptingPattern("C");
+//
+//    a->setTransitions(b,'1');
+//    a->setTransitions(c,'0');
+//    b->setTransitions(a,'1');
+//    b->setTransitions(c,'0');
+//    c->setTransitions(a,'1');
+//    c->setTransitions(b,'0');
+//
+//    input.push_back(a);
+//    input.push_back(b);
+//    input.push_back(c);
 
     set<DfaState*> res = dfa->minimize(input);
     for(auto itr:res){

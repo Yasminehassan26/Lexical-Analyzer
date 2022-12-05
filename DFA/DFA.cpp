@@ -125,7 +125,7 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
                 (!rowState->acceptingState && colState->acceptingState)) {
                 pairsArray[i][j] = true;
             }
-            if (rowState->acceptingState && colState->acceptingState) {
+            if (rowState->acceptingState && colState->acceptingState && (rowState->getAcceptingPattern()!=colState->getAcceptingPattern())) {
                 pairsArray[i][j] = true;
             }
         }
@@ -154,15 +154,12 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
                                 if (pairsArray[row][col]) {
                                     pairsArray[i][j] = true;
                                     findPairs = true;
-                                } else {
-                                    pairsArray[i][j] = true;
-                                    findPairs = true;
                                 }
-
+                            } else {
+                                pairsArray[i][j] = true;
+                                findPairs = true;
                             }
-
                         }
-
                     }
                 }
             }
@@ -171,6 +168,7 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
 
     set<set<DfaState *>> minimizedStates;
     queue<set<DfaState *>> notMarked;
+    set<DfaState*> used;
     for (int i = 0; i < sortedDfaStates.size(); i++) {
         for (int j = 0; j < i; j++) {
            if(!pairsArray[i][j]){
@@ -178,9 +176,20 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
                temp.insert(sortedDfaStates.at(i));
                temp.insert(sortedDfaStates.at(j));
                notMarked.push(temp);
+               used.insert(sortedDfaStates.at(i));
+               used.insert(sortedDfaStates.at(j));
            }
         }
     }
+
+    for(auto itr:sortedDfaStates){
+        if(used.find(itr)==used.end()){
+            set<DfaState*> temp;
+            temp.insert(itr);
+            minimizedStates.insert(temp);
+        }
+    }
+
     while(!notMarked.empty()){
         set<DfaState*> states=notMarked.front();
         notMarked.pop();
@@ -192,7 +201,7 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
             for (auto itr : temp)
             {
                 if(combinedStates.find(itr)!=combinedStates.end()){
-                    combinedStates.insert(states.begin(), states.end());
+                    combinedStates.insert(temp.begin(), temp.end());
                     found=true;
                     break;
                 }
@@ -200,15 +209,12 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
             notMarked.pop();
             if(!found)notMarked.push(temp);
             else found=false;
-
         }
         minimizedStates.insert(combinedStates);// ab cde
     }
 
     return minimizeHelper(minimizedStates);
-
-
-    }
+}
 
 set<DfaState *> DFA::minimizeHelper(set<set<DfaState *>> minimizedStates) {
 
