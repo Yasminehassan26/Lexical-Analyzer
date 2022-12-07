@@ -8,12 +8,22 @@
 #include <queue>
 #include<algorithm>
 
-set<NFA::State *> DFA::getEclosure(NFA::State *startState) {
+bool compare(DfaState* i1, DfaState* i2){
+    return i1->id < i2->id;
+}
+
+bool compareNFA(NFA::State* i1, NFA::State* i2){
+    return i1->id < i2->id;
+}
+
+vector<NFA::State *> DFA::getEclosure(NFA::State *startState) {
     set<NFA::State *> visitedStates;
     stack<NFA::State *> states;
+    vector<NFA::State*> result;
 
     states.push(startState);
     visitedStates.insert(startState);
+    result.push_back(startState);
 
     while (!states.empty()) {
         NFA::State *temp = states.top();
@@ -25,14 +35,16 @@ set<NFA::State *> DFA::getEclosure(NFA::State *startState) {
             if (visitedStates.find(s) == visitedStates.end()) {
                 visitedStates.insert(s);
                 states.push(s);
+                result.push_back(s);
             }
 
         }
     }
-    return visitedStates;
+    sort(result.begin(),result.end(),compareNFA);
+    return result;
 }
 
-void DFA::isAcceptingStateNFA(DfaState *dfaState, set<NFA::State *> nfaStates) {
+void DFA::isAcceptingStateNFA(DfaState *dfaState, vector<NFA::State *> nfaStates) {
     int maxPriority = INT_MAX;
     string token = "";
     for (auto itr: nfaStates) {
@@ -49,6 +61,7 @@ void DFA::isAcceptingStateNFA(DfaState *dfaState, set<NFA::State *> nfaStates) {
     if (!token.empty()) {
         dfaState->setAcceptingPattern(token);
         dfaState->setAcceptingState();
+        dfaState->patternPriority = maxPriority;
     }
 }
 
@@ -69,33 +82,34 @@ void DFA::isAcceptingStateDFA(DfaState *dfaState, set<DfaState *> nfaStates) {
     if (!token.empty()) {
         dfaState->setAcceptingPattern(token);
         dfaState->setAcceptingState();
+        dfaState->patternPriority = maxPriority;
     }
 }
 
 vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
     int id = 0;
     vector<DfaState *> dfaStates;
-    set<NFA::State *> epsilon = DFA::getEclosure(start);
+    vector<NFA::State *> epsilon = DFA::getEclosure(start);
     DfaState *inputState = new DfaState(id, DFA::getNfaStateName(epsilon));
     id++;
     map<string, DfaState *> visitedStates;
-    map<string, pair<DfaState *, set<NFA::State *>>> notVisitedStates;
-    notVisitedStates.insert({inputState->name, pair<DfaState *, set<NFA::State *>>(inputState, epsilon)});
+    map<string, pair<DfaState *, vector<NFA::State *>>> notVisitedStates;
+    notVisitedStates.insert({inputState->name, pair<DfaState *, vector<NFA::State *>>(inputState, epsilon)});
     while (!notVisitedStates.empty()) {
-        pair<DfaState *, set<NFA::State *>> temp = notVisitedStates.begin()->second;
+        pair<DfaState *, vector<NFA::State *>> temp = notVisitedStates.begin()->second;
         visitedStates.insert(pair<string, DfaState *>(temp.first->name, temp.first));
         dfaStates.push_back(temp.first);
         notVisitedStates.erase(notVisitedStates.begin());
         DFA::isAcceptingStateNFA(temp.first, temp.second);
-        map<char, set<NFA::State *>> DFATransitions;
+        map<char, vector<NFA::State *>> DFATransitions;
         for (auto itr: temp.second) {
             multimap<char, NFA::State *> transitions = itr->transitions;
             for (auto itr1: transitions) {
                 if (DFATransitions.find(itr1.first) != DFATransitions.end()) {
-                    set<NFA::State *> ep = DFA::getEclosure(itr1.second);
-                    DFATransitions.at(itr1.first).insert(ep.begin(), ep.end());
+                    vector<NFA::State *> ep = DFA::getEclosure(itr1.second);
+                    DFATransitions.at(itr1.first).insert(DFATransitions.at(itr1.first).end(),ep.begin(), ep.end());
                 } else {
-                    set<NFA::State *> trans = DFA::getEclosure(itr1.second);
+                    vector<NFA::State *> trans = DFA::getEclosure(itr1.second);
                     DFATransitions.insert({itr1.first, trans});
                 }
             }
@@ -108,7 +122,7 @@ vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
             } else {
                 DfaState *newTran = new DfaState(id, DFA::getNfaStateName(itr.second));
                 id++;
-                notVisitedStates.insert({newTran->name, pair<DfaState *, set<NFA::State *>>(newTran, itr.second)});
+                notVisitedStates.insert({newTran->name, pair<DfaState *, vector<NFA::State *>>(newTran, itr.second)});
                 temp.first->setTransitions(newTran, itr.first);
             }
         }
@@ -116,7 +130,7 @@ vector<DfaState *> DFA::convertNFAtoDFA(NFA::State *start) {
     return dfaStates;
 }
 
-string DFA::getNfaStateName(set<NFA::State *> epsilons) {
+string DFA::getNfaStateName(vector<NFA::State *> epsilons) {
     string name;
     for (auto itr: epsilons) {
         name.append(to_string(itr->id));
@@ -134,10 +148,9 @@ string DFA::getDfaStateName(set<DfaState*> epsilons) {
 
 set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
     vector<DfaState *> sortedDfaStates = dfaStates;
-    std::sort(sortedDfaStates.begin(), sortedDfaStates.end());
+    sort(sortedDfaStates.begin(), sortedDfaStates.end(), compare);
     bool pairsArray[sortedDfaStates.size()][sortedDfaStates.size()] = { {false} };
     bool findPairs = true;
-
     //mark the pairs
     for (int i = 0; i < sortedDfaStates.size(); i++) {
         DfaState *rowState = sortedDfaStates.at(i);
@@ -234,7 +247,6 @@ set<DfaState *> DFA::minimize(vector<DfaState *> dfaStates) {
         }
         minimizedStates.insert(combinedStates);// ab cde
     }
-
     return minimizeHelper(minimizedStates);
 }
 

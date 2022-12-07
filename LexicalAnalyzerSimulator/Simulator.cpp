@@ -65,10 +65,8 @@ multimap<string, string> Simulator::patternMatch(DfaState* s0)
                     i = lastIndex+1;
                     s = s0;
                     result.insert({temp, lastAcceptedPattern});
-                    cout << lastAcceptedPattern << endl;
 
                     // write to output file here
-                    //outputfile.write(lastAcceptedPattern.c_str(),lastAcceptedPattern.size());
                     outputfile << lastAcceptedPattern << endl;
 
                     lastAcceptedPattern = "";
@@ -92,9 +90,8 @@ multimap<string, string> Simulator::patternMatch(DfaState* s0)
                 i = lastIndex+1;
                 s = s0;
                 result.insert({temp, lastAcceptedPattern});
-                cout << lastAcceptedPattern << endl;
+
                 // write to output file here
-                //outputfile.write(lastAcceptedPattern.c_str(),lastAcceptedPattern.size());
                 outputfile << lastAcceptedPattern << endl;
                 lastAcceptedPattern = "";
                 temp = "";

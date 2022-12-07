@@ -77,34 +77,26 @@ class NFA{
 				};
 
 				State* clone(multimap<State*, State*> &visited){
-				    //cout << visited.size()<< "visited size" << endl;
+
 				   multimap<State*,State*>::iterator it;
-//					for ( it = visited.begin(); it != visited.end(); it++){
-//					    cout << it->first << " "<< it->second << endl;
-//					}
-					//cout << "end of for loop _______________________________________" <<endl;
+
 					State* cloned = new State();
                     if(visited.find(this) == visited.end())
                       visited.insert({this, cloned});
                     else return visited.find(this)->second;
 
-					//cout << this <<" " << cloned << endl ;
 					cloned->acceptingState = acceptingState;
 					cloned->acceptingPattern = acceptingPattern;
 					cloned->patternPriority = patternPriority;
 					// coping transitions
 					multimap<char,State*>::iterator itr;
 					for ( itr = transitions.begin(); itr != transitions.end(); itr++){
-                        // cout << itr->second << " key for search" <<endl;
 						if(visited.find((itr->second)) != visited.end()){
 
-                                //cout << "found in visited" << endl ;
 							cloned->addTransition(itr->first, visited.find(itr->second)->second);
 						}else{
-						    //cout << "not found in transitions" << endl;
 							cloned->addTransition(itr->first, (itr->second)->clone(visited));
 					}}
-					//cout << "finished coping transitions" << endl;
 
 					// coping epsilon transitions
 					list<State*>::iterator itr1;
@@ -150,6 +142,9 @@ class NFA{
 
 					cout << endl;
 				}
+            bool operator< (const State &other) const {
+                return id < other.id;
+            }
 		};
 
 	// constructor
