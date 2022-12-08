@@ -25,9 +25,6 @@ class NFA{
 				// list of states that this state goes to with epsilon transition
 				list<State*> epsilonTransitions;
 
-				// Set of NFA state from which this state is constructed
-				set<State*> parentStates;
-
 				// True if this state is accepting state (final state)
 				bool acceptingState = false;
 
@@ -40,15 +37,8 @@ class NFA{
 
 				};
 
-				//! Constructs new state from the set of other states
-				/*! This is necessary for subset construction algorithm
-					because there a new DFA state is constructed from
-					one or more NFA states
-				*/
 				State( set<State*> NFAState)
 				{
-					parentStates	= NFAState;
-
 
 					// DFA state is accepting state if it is constructed from
 					// an accepting NFA state
@@ -60,10 +50,6 @@ class NFA{
 							acceptingPattern = (*iter)->acceptingPattern;
 						}
 				};
-
-				void addParent(State *pState){
-					parentStates.insert(pState);
-				}
 
 				//! Adds a transition from this state to the other
 				void addTransition(char chInput, State *pState){
@@ -106,14 +92,6 @@ class NFA{
 						}else{
 							cloned->addEpsilonTransition((*itr1)->clone(visited));
 					}}
-					// coping parent states
-					/*set<State*>::iterator iter;
-					for(iter=parentStates.begin(); iter!=parentStates.end(); iter++){
-						if(visited.find((*iter)) != visited.end())
-							cloned->addParent(visited.find((*iter))->second);
-						else
-							cloned->addParent((*iter)->clone(visited));
-					}*/
 
 					return cloned;
 				};
@@ -142,9 +120,6 @@ class NFA{
 
 					cout << endl;
 				}
-            bool operator< (const State &other) const {
-                return id < other.id;
-            }
 		};
 
 	// constructor
@@ -252,7 +227,7 @@ class NFA{
 		bool plus();
 
 
-		string  keywordsHandler (string regular);
+		string keywordsHandler(string regular);
 		vector<string> preprocessing(string strRegEx);
 
 		FSATABLE createNFA(vector<string> tokens,string name ,bool isExpr,int priority);

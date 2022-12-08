@@ -153,23 +153,8 @@ bool NFA::plus()
 	if(!pop(A))
 		return false;
 
-
-//	State *pStartState	= new State();
-//	State *pEndState	= new State();
-
-
-	// add epsilon transition from start state to the first state of A
-//	pStartState->addEpsilonTransition( A[0]);
-//
-//	// add epsilon transition from A last state to end state
-//	A[A.size()-1]->addEpsilonTransition( pEndState);
-
 	// From A last to A first state
 	A[A.size()-1]->addEpsilonTransition(A[0]);
-
-	// construct new NFA and store it onto the stack
-//	A.push_back(pEndState);
-//	A.push_front(pStartState);
 
 	// Push the result onto the stack
 	operandStack.push(A);
@@ -184,7 +169,6 @@ string NFA:: keywordsHandler (string regular){
 		if(regular[0]==' ') regular=regular.substr(1);
 		if(regular[regular.size()-1]==' ')regular=regular.substr(0,regular.size()-1);
 
-        //cout << "before while loop " << regular << " regular size "<< regular.size()<< endl;
 		int i = 0 ;
 		while(i<regular.size()){
             string temp = "";
@@ -193,27 +177,15 @@ string NFA:: keywordsHandler (string regular){
                 i++;
             }
             i++;
-           // cout << "Temp   " << temp << endl;
             string name = temp;
             if (name[0] == '\\') name = name.substr(1);
             string keyword = name + ":" + temp;
-            //cout <<endl << "input to get tokens " << keyword <<endl ;
             getTokens(keyword,':',0);
 		}
 
         return "";
 	}
-//	else if(regular[0] == '['){
-//	    //remove brackets and spaces
-//		regular = regular.substr(1,regular.size()-2);
-//		if(regular[0]==' ') regular=regular.substr(1);
-//		if(regular[regular.size()-1]==' ')regular=regular.substr(0,regular.size()-1);
-//
-//		replace( regular.begin(), regular.end(), ' ', '|');
-//
-//		regular =  "punc:" + regular;
-//		return "";
-//	}
+
 	return regular;
 };
 
@@ -222,27 +194,22 @@ vector<string> NFA:: preprocessing(string regular)
 // for punct and keywords to follow RE rules
 
 //for splitting on space , and add concate
-//letterdigit*digit
     vector<string> tokens ;
 	string temp;
     int i = 0;
 
 	while(i < regular.size()){
 	if(regular[i] == ' ' ){
-	//	cout << regular[i] << "space" <<endl ;
 		i++;
 	}
 	if(isBackSlash(string(1,regular[i]))){
-	//	cout << "back slash" <<endl ;
 		if(isReserved(string(1,regular[i+1]))){
-		//	cout << "reserved" << endl;
 			string token = regular.substr(i,2);
 			tokens.push_back(token);
 			i+=2;
 		}
 	}
 	if(isOperator(string(1, regular[i]))) {
-       //cout << regular[i] << "Operator" <<endl ;
 
 		string token ;
 		if(regular[i]=='.'){
@@ -254,12 +221,10 @@ vector<string> NFA:: preprocessing(string regular)
 		tokens.push_back(token);
 		i++;
 		}
-     //cout << i << endl ;
      while(!isOperator(string(1, regular[i])) && regular[i] != ' '&& i< regular.size()&& !(isBackSlash(string(1,regular[i]))&&isReserved(string(1,regular[i+1])))) {
 		temp += regular[i];
 		i++;
 	 }
-   // cout << temp << endl;
 	 while(temp.size()>1){
 		//found
 		if(definitions.find(temp) != definitions.end()){
@@ -270,9 +235,7 @@ vector<string> NFA:: preprocessing(string regular)
 			i--;
 		}
 	 }
-        //cout << "out of second loop" << endl;
 	 	if(temp.size()==1) {
-	 		//cout << temp << "singleChar"<< int(temp[0]) <<endl ;
 
 		 tokens.push_back(temp);
 		 temp = "";
@@ -280,32 +243,21 @@ vector<string> NFA:: preprocessing(string regular)
 
 	};
 	vector <string> preprocessedRE;
-	//cout << tokens.size() <<endl;
 
 	for(int i=0; i<tokens.size()-1; i++)
 	{
 
 		string cLeft = tokens[i];
 		string cRight = tokens[i+1];
-	//	cout << cLeft << endl ;
 		preprocessedRE.push_back(cLeft) ;
 
 		if((isInput(cLeft)) || (isRightParanthesis(cLeft)) || (cLeft=="*") ||(cLeft=="+")){
 				if((isInput(cRight)) || (isLeftParanthesis(cRight)))
-			    	//preprocessedRE += ". ";
 			    	preprocessedRE.push_back(".");
 		}
 
-		//cout << preprocessedRE;
 	}
 	preprocessedRE.push_back(tokens[tokens.size()-1]) ;
-
-    //cout << preprocessedRE << endl ;
-//    int k = 0 ;
-//    for(k = 0 ; k<preprocessedRE.size();k++){
-//    	cout << preprocessedRE[k] << " ";
-//	}
-//	cout << endl;
 
 	return preprocessedRE;
 
@@ -324,38 +276,13 @@ bool NFA:: readRules(){
 		  regular = keywordsHandler(regular);
           if(regular.size()!= 0){
 			if (regular.find(':') == string::npos){
-//				string name = regular.substr(0, regular.find('='));
-//				string RE = regular.substr(regular.find('=')+1);
-//				if(name[name.size()-1]==' ')
-//				  name = name.substr(0,name.size()-1);
-//                cout  << "definition " << name <<"\n";
-//				vector<string> tokens = preprocessing(RE);
                  getTokens(regular,'=',-1);
-				//definitions.insert(make_pair(name,createNFA(tokens,name,false,-1)));
 			}else{
-//				string name = regular.substr(0, regular.find(':'));
-//				string RE = regular.substr(regular.find(':')+1);
-//				if(name[name.size()-1]==' ')
-//				  name = name.substr(0,name.size()-1);
-//			     cout  << "expression " << name <<"\n";
-//				 vector<string> tokens = preprocessing(RE);
-
                 getTokens(regular,':',priority++);
-				//expressions.insert(make_pair(name,createNFA(tokens,name,true,priority++)));
 			}
       }}
       newfile.close(); //close the file object.
    }
-   //cout << "out of create" << endl;
-     /* FSATABLE finalNFA = expressions.find("letter")->second;
-    int i = 0;
-    for (i = 0; i < finalNFA.size(); i++)
-    {
-        NFA::State *temp = finalNFA.front();
-        finalNFA.pop_front();
-        finalNFA.push_back(temp);
-        temp->print();
-    }*/
 
    return createFinalNFA();
 };
@@ -394,13 +321,11 @@ bool NFA:: createFinalNFA(){
 };
 
 NFA:: FSATABLE NFA:: createNFA(vector<string> tokens , string patternMatch ,bool isExpr,int priority){
-//cout << tokens.size() << endl;
 
 	for(int i=0; i<tokens.size(); i++)
 	{
 		// get the charcter
 		string token = tokens[i];
-		//cout << token << endl;
 		//found
         if(definitions.find(token)!= definitions.end()){
          operandStack.push(clone(definitions.find(token)->second));
@@ -417,8 +342,6 @@ NFA:: FSATABLE NFA:: createNFA(vector<string> tokens , string patternMatch ,bool
 			// Evaluate everyting in paranthesis
 			while(!isLeftParanthesis(string(1,operatorStack.top())))
                 Eval();
-			/*	if(!Eval())
-					return ;*/
 			// Remove left paranthesis after the evaluation
 			operatorStack.pop();
 		}
@@ -426,8 +349,6 @@ NFA:: FSATABLE NFA:: createNFA(vector<string> tokens , string patternMatch ,bool
 		{
 			while(!operatorStack.empty() && presedence(token[0], operatorStack.top()))
 				Eval();
-				/*if(!Eval())
-					return nullptr;*/
 			operatorStack.push(token[0]);
 		}
 	}
@@ -435,14 +356,10 @@ NFA:: FSATABLE NFA:: createNFA(vector<string> tokens , string patternMatch ,bool
 	// Evaluate the rest of operators
 	while(!operatorStack.empty())
         Eval();
-		/*if(!Eval())
-			return nullptr;*/
 
 	// Pop the result from the stack
 	FSATABLE NFATable;
 	pop(NFATable);
-	//if(!pop(NFATable))
-		//return nullptr;
 
 	// Last NFA state is always accepting state
 	if(isExpr){
@@ -450,7 +367,6 @@ NFA:: FSATABLE NFA:: createNFA(vector<string> tokens , string patternMatch ,bool
 	NFATable[NFATable.size()-1]->acceptingPattern = patternMatch ;
 	NFATable[NFATable.size()-1]->patternPriority = priority ;
 	}
-	//expressions.insert(make_pair(patternMatch,NFATable));
 
 	return NFATable;
 }

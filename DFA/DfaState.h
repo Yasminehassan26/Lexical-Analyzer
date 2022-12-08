@@ -8,6 +8,12 @@
 #include <map>
 #include <list>
 #include <set>
+#include <stack>
+#include <deque>
+#include <vector>
+#include <algorithm>
+#include <stdbool.h>
+#include <iostream>
 
 using namespace std;
 

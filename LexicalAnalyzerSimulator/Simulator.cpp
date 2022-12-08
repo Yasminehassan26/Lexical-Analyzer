@@ -31,6 +31,21 @@ DfaState* Simulator::lexicalGenerator()
     NFA::FSATABLE finalNFA = nfa->NFATable;
     vector<DfaState*> conv = dfa->convertNFAtoDFA(finalNFA.front());
     set<DfaState*> minDFA = dfa->minimize(conv);
+//    fstream newfile;
+//    newfile.open("C:\\Users\\Carnival\\CLionProjects\\Lexical-Analyzer\\LexicalAnalyzerSimulator\\TransitionTable.txt", ios::out);
+//    for(auto itr: minDFA){
+//        if(itr->acceptingState){
+//            newfile << "---------- State (" << itr->id <<") (Final State: " << itr->acceptingPattern << ") Transitions ----------" << endl;
+//        }else{
+//            newfile << "---------- State (" << itr->id <<") Transitions ----------" << endl;
+//        }
+//
+//        // print transitions
+//        multimap<char,DfaState*>::iterator itr1;
+//        for ( itr1 = itr->transitions.begin(); itr1 != itr->transitions.end(); itr1++)
+//            newfile << itr1->first << " -> " << itr1->second->id << endl;
+//    }
+//    newfile.close();
     return *(conv.begin());
 }
 
@@ -104,3 +119,7 @@ multimap<string, string> Simulator::patternMatch(DfaState* s0)
     newfile.close();
     return result;
 }
+
+//bool compareDFA(DfaState* i1, DfaState* i2){
+//    return i1->id < i2->id;
+//}
