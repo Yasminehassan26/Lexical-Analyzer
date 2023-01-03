@@ -248,8 +248,9 @@ map<string,vector<vector<string>>> readRules(){
 }
 
 
-map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<vector<string>>> rules,vector<string> nonTerminals) {
+map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<vector<string>>> rules) {
     map<string, vector<vector<string>>> newRules;
+    vector<string> newNonTerminals;
     for (int s=0;s<nonTerminals.size();s++) {
         string nonTerminal=nonTerminals.at(s);
         bool check=true;
@@ -320,6 +321,7 @@ map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<ve
 
 
         if (newRules.find(newNonTerminal) != newRules.end()) {
+            newNonTerminals.push_back(newNonTerminal);
             newRules[nonTerminal] = restEliminatedVector;
             vector<string> eps;
             eps.push_back("\\L");
@@ -328,15 +330,13 @@ map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<ve
 
     }
     Print(newRules,"Printing the rules after left recursion elimination");
+    nonTerminals=newNonTerminals;
     return newRules;
 }
 
 map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<vector<string>>> rules) {
 
-    vector<string> nonTerminals;
-    for(auto rule:rules){
-        nonTerminals.push_back(rule.first);
-    }
+
 
     for (int s=0;s<nonTerminals.size();s++) {
         string nonTerminal=nonTerminals.at(s);
