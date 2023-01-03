@@ -394,36 +394,56 @@ map<string, vector<vector<string>>> refactorRules(map<string, vector<vector<stri
     map<string,vector<vector<string>>> eliminatedLeftFactoring = eliminateLeftFactoring(eliminatedLeftRecursion);
     return eliminatedLeftFactoring;
 }
+
+void printFirst(map<string, set<string>> firstSet){
+    cout << "=============== FIRST SET =================" << endl;
+    for(auto i : firstSet){
+        int count = 0;
+        cout << "FIRST( " <<i.first << " ) = { " ;
+        for(string j : i.second){
+            cout << j ;
+            count++;
+            if(count == i.second.size())
+                cout << " }" << endl;
+            else
+                cout << ", ";
+        }
+    }
+}
+
+void printFollow(map<string, set<string>> followSet){
+    cout << "=============== FOLLOW SET =================" << endl;
+    for(auto i : followSet){
+        int count = 0;
+        cout << "FOLLOW( " <<i.first << " ) = { " ;
+        for(string j : i.second){
+            cout << j ;
+            count++;
+            if(count == i.second.size())
+                cout << " }" << endl;
+            else
+                cout << ", ";
+        }
+    }
+}
+
 int main() {
 //    map<string, vector<vector<string>>> rules = readRules();
 //    map<string, vector<vector<string>>> refactoredRules = refactorRules(rules);
 //
 //    map<string, set<string>> firstSetMap = firstSet(refactoredRules);
 //    map<string, set<string>> followSetMap = followSet(refactoredRules, firstSetMap);
-    map<string,vector<vector<string>>> rules = readRules();
+
+    map<string, vector<vector<string>>> rules = readRules();
     map<string, set<string>> firstSetMap = firstSet(rules);
-    map<string, set<string>> followSetMap = followSet(rules,firstSetMap);
-//    cout << "First set:  " << firstSetMap.size() << endl;
-//    for(auto i : firstSetMap){
-//        cout << "-----------" <<i.first << "----------" << endl;
-//        for(auto j : i.second){
-//            cout << j << endl;
-//        }
-//        cout << "-------------------------" << endl;
-//    }
-//
-//    cout << "follow set:  " << followSetMap.size() << endl;
-//    for(auto i : followSetMap){
-//        cout << "-----------" <<i.first << "----------" << endl;
-//        for(auto j : i.second){
-//            cout << j << endl;
-//        }
-//        cout << "-------------------------" << endl;
-//    }
+    map<string, set<string>> followSetMap = followSet(rules, firstSetMap);
+
+    //printFirst(firstSetMap);
+    //printFollow(followSetMap);
 
     table *t = new table();
     map<string, map<string, vector<string>>> parsingTable = t->getParsingTable(rules, firstSetMap, followSetMap);
-    //t->printTable(parsingTable);
+    t->printTable(parsingTable);
 
     Simulator *sim = new Simulator();
     vector<pair<string,string>> input = sim -> lexicalAnalyzer();
