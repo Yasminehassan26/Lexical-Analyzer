@@ -10,6 +10,7 @@
 
 using namespace std;
 string startSympol = "";
+vector<string> nonTerminals;
 
 map<string,set<string>> followSet(map<string,vector<vector<string>>> rules,map<string,set<string>>firstSet) {
     map<string, set<string>> followSetMap;
@@ -186,7 +187,7 @@ map<string,vector<vector<string>>> readRules(){
                 while(s<line.size() && line[s]==' ') s++;
                 nonTerminal = line.substr(s, line.find("::=")-s);
                 if(nonTerminal[nonTerminal.size()-1]==' ')nonTerminal=nonTerminal.substr(0,nonTerminal.size()-1);
-
+                nonTerminals.push_back(nonTerminal);
                 if(firstLine){
                     firstLine = false;
                     startSympol = nonTerminal;
@@ -384,8 +385,6 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
                 check= false;
             }
             }
-        Print(rules,"******************************************************************************************printing the rules after "+nonTerminal);
-
 
     }
 
@@ -395,12 +394,7 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
 }
 map<string, vector<vector<string>>> refactorRules(map<string, vector<vector<string>>> rules) {
     map<string, vector<vector<string>>> eliminatedLeftRecursion = eliminateLeftRecursion(rules);
-    cout << "***********************************************************************" << endl;
-    cout << "***********************************************************************" << endl;
-
     map<string,vector<vector<string>>> eliminatedLeftFactoring = eliminateLeftFactoring(eliminatedLeftRecursion);
-    cout << "***********************************************************************" << endl;
-
     return eliminatedLeftFactoring;
 }
 
