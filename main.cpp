@@ -10,6 +10,7 @@
 
 using namespace std;
 string startSympol = "";
+vector<string> nonTerminals;
 
 map<string,set<string>> followSet(map<string,vector<vector<string>>> rules,map<string,set<string>>firstSet) {
     map<string, set<string>> followSetMap;
@@ -186,7 +187,7 @@ map<string,vector<vector<string>>> readRules(){
                 while(s<line.size() && line[s]==' ') s++;
                 nonTerminal = line.substr(s, line.find("::=")-s);
                 if(nonTerminal[nonTerminal.size()-1]==' ')nonTerminal=nonTerminal.substr(0,nonTerminal.size()-1);
-
+                nonTerminals.push_back(nonTerminal);
                 if(firstLine){
                     firstLine = false;
                     startSympol = nonTerminal;
@@ -443,7 +444,7 @@ int main() {
 
     table *t = new table();
     map<string, map<string, vector<string>>> parsingTable = t->getParsingTable(rules, firstSetMap, followSetMap);
-    t->printTable(parsingTable);
+    //t->printTable(parsingTable);
 
     Simulator *sim = new Simulator();
     vector<pair<string,string>> input = sim -> lexicalAnalyzer();

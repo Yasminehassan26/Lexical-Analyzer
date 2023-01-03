@@ -12,6 +12,9 @@
     string output = "";
     string latestNT;
     while(!states.empty()){
+        cout << "begin loop" << endl;
+        printRes(states,output);
+        cout << "-------------" << endl;
         string top = states.back();
         string pattern = input.begin()->second;
         string secondcheck = input.begin()->first;
@@ -85,8 +88,12 @@
 
 void Parsing::printRes(vector<string> stack, string matched){
     string res = matched;
+    string st = "";
     for(int i=stack.size()-1; i>0; i--){
         res = res+ " " + stack.at(i);
+        st = st + stack.at(i) + " ";
     }
+    cout << "hi " << res << endl;
+    cout << "stack: " << st << endl;
     mariem.push_back(res);
 }
