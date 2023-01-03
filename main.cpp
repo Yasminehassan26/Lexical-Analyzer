@@ -165,7 +165,7 @@ map<string,vector<vector<string>>> readRules(){
     map<string,vector<vector<string>>> rules;
     //stmt = if stmt then stmt|while stmt
     fstream newfile;
-    newfile.open("C:\\Users\\Carnival\\CLionProjects\\Lexical-Analyzer\\CFG_Rules.txt",ios::in);
+    newfile.open("D:\\Lexical-Analyzer\\CFG_Rules.txt",ios::in);
     bool firstLine = true;
 
     if (newfile.is_open()){
@@ -247,10 +247,10 @@ map<string,vector<vector<string>>> readRules(){
 }
 
 
-map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<vector<string>>> rules) {
+map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<vector<string>>> rules,vector<string> nonTerminals) {
     map<string, vector<vector<string>>> newRules;
-    for (auto rule: rules) {
-        string nonTerminal = rule.first;
+    for (int s=0;s<nonTerminals.size();s++) {
+        string nonTerminal=nonTerminals.at(s);
         bool check=true;
         int counter;
         while(check){
@@ -260,7 +260,7 @@ map<string, vector<vector<string>>> eliminateLeftRecursion(map<string, vector<ve
             if(newRules.find(nonTerminal) != newRules.end()){
                  wanted=newRules[nonTerminal];
             }
-            else wanted=rule.second;
+            else wanted=rules[nonTerminal];
             for (int k = 0; k < wanted.size(); k++) {
                 vector<string> ruleVector;
 
@@ -345,7 +345,6 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
             int counter=0;
             vector<vector<string>> wanted=rules[nonTerminal];
 
-
             for(int i=0;i< wanted.size();i++){
                 vector<vector<string>> eliminatedVector ;
                 vector<vector<string>> restEliminatedVector;
@@ -356,6 +355,9 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
                     string first2=vec2.at(0);
                     if(first1==first2){
                         vec2.erase(vec2.begin());
+                        if(vec2.empty()){
+                            vec2.push_back("\\L");
+                        }
                         eliminatedVector.push_back(vec2);
                     }
                     else restEliminatedVector.push_back(vec2);
@@ -382,6 +384,8 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
                 check= false;
             }
             }
+        Print(rules,"******************************************************************************************printing the rules after "+nonTerminal);
+
 
     }
 
@@ -391,7 +395,12 @@ map<string, vector<vector<string>>> eliminateLeftFactoring(map<string, vector<ve
 }
 map<string, vector<vector<string>>> refactorRules(map<string, vector<vector<string>>> rules) {
     map<string, vector<vector<string>>> eliminatedLeftRecursion = eliminateLeftRecursion(rules);
+    cout << "***********************************************************************" << endl;
+    cout << "***********************************************************************" << endl;
+
     map<string,vector<vector<string>>> eliminatedLeftFactoring = eliminateLeftFactoring(eliminatedLeftRecursion);
+    cout << "***********************************************************************" << endl;
+
     return eliminatedLeftFactoring;
 }
 
@@ -435,21 +444,23 @@ int main() {
 //    map<string, set<string>> followSetMap = followSet(refactoredRules, firstSetMap);
 
     map<string, vector<vector<string>>> rules = readRules();
-    map<string, set<string>> firstSetMap = firstSet(rules);
-    map<string, set<string>> followSetMap = followSet(rules, firstSetMap);
+    map<string, vector<vector<string>>> refactoredRules = refactorRules(rules);
+
+//    map<string, set<string>> firstSetMap = firstSet(rules);
+//    map<string, set<string>> followSetMap = followSet(rules, firstSetMap);
 
     //printFirst(firstSetMap);
     //printFollow(followSetMap);
 
-    table *t = new table();
-    map<string, map<string, vector<string>>> parsingTable = t->getParsingTable(rules, firstSetMap, followSetMap);
-    t->printTable(parsingTable);
-
-    Simulator *sim = new Simulator();
-    vector<pair<string,string>> input = sim -> lexicalAnalyzer();
-
-    Parsing *p = new Parsing();
-    p->parse(startSympol,parsingTable,input);
+//    table *t = new table();
+//    map<string, map<string, vector<string>>> parsingTable = t->getParsingTable(rules, firstSetMap, followSetMap);
+//    t->printTable(parsingTable);
+//
+//    Simulator *sim = new Simulator();
+//    vector<pair<string,string>> input = sim -> lexicalAnalyzer();
+//
+//    Parsing *p = new Parsing();
+//    p->parse(startSympol,parsingTable,input);
 
     return 0;
 }
