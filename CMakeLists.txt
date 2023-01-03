@@ -3,5 +3,4 @@ project(Lexical_Analyzer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Lexical_Analyzer main.cpp DFA/DfaState.cpp DFA/DfaState.h DFA/DFA.cpp DFA/DFA.h Minimization/DfaMinimization.cpp Minimization/DfaMinimization.h Minimization/DfaMinimization.h DFA/DfaMinimization.cpp)
-e
+add_executable(Lexical_Analyzer main.cpp DFA/DfaState.cpp DFA/DfaState.h DFA/DFA.cpp DFA/DFA.h NFA/NFA.cpp NFA/NFA.h LexicalAnalyzerSimulator/Simulator.cpp LexicalAnalyzerSimulator/Simulator.h Parsing.h Parsing.cpp table.cpp table.h)

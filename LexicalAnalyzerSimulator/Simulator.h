@@ -22,6 +22,6 @@ class Simulator
 public:
     Simulator();
     DfaState* lexicalGenerator();
-    multimap<string, string> lexicalAnalyzer();
-    multimap<string, string> patternMatch(DfaState* s0);
+    vector<pair<string, string>> lexicalAnalyzer();
+    vector<pair<string, string>> patternMatch(DfaState* s0);
 };

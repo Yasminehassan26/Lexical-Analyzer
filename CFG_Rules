@@ -1,0 +1,42 @@
+# DECLARATION = PRIMITIVE_TYPE 'id' ';'
+# PRIMITIVE_TYPE = 'int' | 'float' |\L
+# IF = 'if' '(' EXPRESSION ')' '{' STATEMENT '}' 'else' '{' STATEMENT '}'
+# WHILE = 'while' '(' EXPRESSION ')' '{' STATEMENT '}'
+# ASSIGNMENT = 'id' '=' EXPRESSION ';'
+# SIMPLE_EXPRESSION = TERM | SIGN TERM |  'addop' TERM SIMPLE_EXPRESSION |\L
+# TERM = FACTOR | 'mulop' FACTOR TERM
+# FACTOR = 'id' | 'num' | '(' EXPRESSION ')'
+# SIGN = '+' | '-'
+# EXPRESSION = SIMPLE_EXPRESSION
+| SIMPLE_EXPRESSION 'relop' SIMPLE_EXPRESSION
+
+#S=A C B| C 'b' B|B 'a'
+#A='d' 'a'|B C
+#B='g'| \L
+#C='h'| \L
+
+# E = T E'
+# E' = '+' E | \L
+# T = F T'
+# T' = T | \L
+# F = P F'
+#F' = '*' F | \L
+#P = '(' E ')' | 'a' | 'b' | 'em'
+
+#S = R T
+#R = 's' U R 'b' | \L
+#U = 'u' U | \L
+#V = 'v' V | \L
+#T = V 't' T | \L
+
+# bexpr = bterm bexpr'
+# bexpr' = 'or' bterm bexpr' | \L
+# bterm = bfactor bterm'
+# bterm' = 'and' bfactor bterm' | \L
+# bfactor = 'not' bfactor | '(' bexpr ')' | 'true' | 'false'
+
+# E = T E'
+# E' = '+' T E' | \L
+# T = F T'
+# T' = '*' F T' | \L
+#F = '(' E ')' |  'id'

@@ -49,19 +49,19 @@ DfaState* Simulator::lexicalGenerator()
     return *(conv.begin());
 }
 
-multimap<string, string> Simulator::lexicalAnalyzer()
+vector<pair<string, string>> Simulator::lexicalAnalyzer()
 {
     DfaState* s0 = lexicalGenerator();
     return patternMatch(s0);
 }
 
-multimap<string, string> Simulator::patternMatch(DfaState* s0)
+vector<pair<string, string>> Simulator::patternMatch(DfaState* s0)
 {
     fstream newfile;
     newfile.open("C:\\Users\\Carnival\\CLionProjects\\Lexical-Analyzer\\LexicalAnalyzerSimulator\\code.txt", ios::in);
     fstream outputfile;
     outputfile.open("C:\\Users\\Carnival\\CLionProjects\\Lexical-Analyzer\\LexicalAnalyzerSimulator\\out.txt", ios::out);
-    multimap<string, string> result;
+    vector<pair<string, string>> result;
     if (newfile.is_open())
     {
         string inputLine;
@@ -77,17 +77,24 @@ multimap<string, string> Simulator::patternMatch(DfaState* s0)
                 char ch = inputLine[i];
                 if (s->transitions.find(ch)==s->transitions.end())
                 {
-                    i = lastIndex+1;
-                    s = s0;
-                    result.insert({temp, lastAcceptedPattern});
-
-                    // write to output file here
-                    outputfile << lastAcceptedPattern << endl;
-
-                    lastAcceptedPattern = "";
-                    temp = "";
-                    if (inputLine[i] == ' ')
+                    if(lastAcceptedPattern.empty() && !s->acceptingState){
+                        outputfile << "error: character not recognizied" << endl;
                         i++;
+                    }else{
+                        i = lastIndex+1;
+                        s = s0;
+                        result.push_back({temp, lastAcceptedPattern});
+                        //result.insert(pair{temp, lastAcceptedPattern});
+
+                        // write to output file here
+                        outputfile << lastAcceptedPattern << endl;
+
+                        lastAcceptedPattern = "";
+                        temp = "";
+                        if (inputLine[i] == ' ')
+                            i++;
+                    }
+
                 }
                 else
                 {
@@ -104,7 +111,7 @@ multimap<string, string> Simulator::patternMatch(DfaState* s0)
             if(lastAcceptedPattern!=""){
                 i = lastIndex+1;
                 s = s0;
-                result.insert({temp, lastAcceptedPattern});
+                result.push_back({temp, lastAcceptedPattern});
 
                 // write to output file here
                 outputfile << lastAcceptedPattern << endl;
